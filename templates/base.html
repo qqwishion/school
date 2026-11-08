@@ -1,0 +1,15 @@
+{% load static %}<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Шаг — библиотека заданий для небольших учебных шагов. Материалы для педагогов и родителей.">
+<title>{% block title %}Шаг · библиотека небольших открытий{% endblock %}</title>
+<meta name="theme-color" content="#f5f7f2" id="theme-color">
+<script src="{% static 'theme-init.js' %}"></script>
+<link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml"><link rel="stylesheet" href="{% static 'app.css' %}"><link rel="stylesheet" href="{% static 'experience.css' %}"><script defer src="{% static 'app.js' %}"></script></head>
+<body><a class="skip" href="#main">К содержимому</a>
+<header class="header"><div class="header-inner"><a class="brand" href="{% url 'catalog' %}" aria-label="Шаг — каталог"><span class="brand-mark" aria-hidden="true">ш</span> шаг<span class="brand-dot">.</span></a>
+<nav aria-label="Основная навигация"><a {% if request.resolver_match.url_name == 'catalog' %}aria-current="page"{% endif %} href="{% url 'catalog' %}">Каталог</a><a {% if request.resolver_match.url_name == 'favorites' %}aria-current="page"{% endif %} href="{% url 'favorites' %}">Избранное</a><a {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %} href="{% url 'about' %}">О проекте</a></nav>
+<div class="account"><button class="theme-toggle" type="button" aria-label="Включить тёмную тему" aria-pressed="false" title="Сменить тему" hidden><svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M20.5 13.5A8.5 8.5 0 0 1 10.5 3.5a8.5 8.5 0 1 0 10 10Z"/></svg><svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></button>{% if user.is_authenticated %}<span class="user-name">{{ user.first_name }}</span><form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="login-link" type="submit">Выйти <span aria-hidden="true">↗</span></button></form>{% else %}<a class="login-link" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Войти <span aria-hidden="true">↗</span></a>{% endif %}</div></div></header>
+{% if demo_mode %}<div class="demo-strip">Демонстрационная библиотека <span>·</span> Задания ожидают проверки педагогом</div>{% endif %}
+<main id="main" class="main">{% if messages %}<div aria-live="polite">{% for message in messages %}<p class="notice">{{ message }}</p>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}</main>
+<footer><a class="footer-brand" href="{% url 'catalog' %}">шаг.</a><p>В своём темпе. С вашей поддержкой.</p><span>Для педагогов и родителей · 5–10 лет</span><a href="{% url 'about' %}">О библиотеке ↗</a></footer>
+</body></html>

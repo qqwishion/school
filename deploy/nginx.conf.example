@@ -1,0 +1,25 @@
+# Replace domain, TLS certificate paths and absolute static path.
+# WSGI listens on loopback only: waitress-serve --listen=127.0.0.1:8080 shag.wsgi:application
+server {
+    listen 80;
+    server_name shag.example.org;
+    return 301 https://$host$request_uri;
+}
+server {
+    listen 443 ssl;
+    server_name shag.example.org;
+    ssl_certificate /etc/letsencrypt/live/shag.example.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/shag.example.org/privkey.pem;
+    client_max_body_size 65m;
+    location /static/ {
+        alias /srv/shag/staticfiles/;
+    }
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        # Overwrite user-supplied forwarded values. Enable TRUST_PROXY=1 in Django.
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $remote_addr;
+    }
+    # No location for private_media: every attachment goes through Django.
+}
