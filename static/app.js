@@ -41,29 +41,6 @@ window.addEventListener('storage', event => {
     ? event.newValue : (systemTheme.matches ? 'dark' : 'light'));
 });
 
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-if (!reducedMotion.matches && 'IntersectionObserver' in window) {
-  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    entry.target.classList.remove('reveal-pending');
-    entry.target.classList.add('reveal-visible');
-    observer.unobserve(entry.target);
-  }), { threshold: .08 });
-  document.querySelectorAll('.material-card, .gentle-note, .adaptations > div').forEach((element, index) => {
-    // Already-visible cards stay immediately readable; only reveal later content.
-    if (element.getBoundingClientRect().top > window.innerHeight) {
-      element.classList.add('reveal-pending');
-      element.style.setProperty('--reveal-delay', `${index % 3 * 45}ms`);
-      observer.observe(element);
-    }
-  });
-  reducedMotion.addEventListener('change', event => {
-    if (event.matches) {
-      observer.disconnect();
-      document.querySelectorAll('.reveal-pending').forEach(element => element.classList.remove('reveal-pending'));
-    }
-  });
-}
 document.querySelector('#id_sort')?.addEventListener('change', (event) => event.target.form.requestSubmit());
 document.querySelectorAll('.print-button').forEach(button => button.addEventListener('click', () => window.print()));
 document.querySelectorAll('form').forEach(form => form.addEventListener('submit', () => {
